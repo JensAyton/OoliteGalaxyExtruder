@@ -1,0 +1,517 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1A17D17211C184F200F96041 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A17D17111C184F200F96041 /* OpenGL.framework */; };
+		1A17D19211C1854A00F96041 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A17D19111C1854A00F96041 /* Accelerate.framework */; };
+		1A55BBBA130B229B006C38DE /* OoliteBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A55BB82130B227B006C38DE /* OoliteBase.framework */; };
+		1A55BBBC130B22AC006C38DE /* OoliteBase.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 1A55BB82130B227B006C38DE /* OoliteBase.framework */; };
+		1A649F451323B87900C2FDDB /* oolite-enduser-configuration.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1A649F441323B87900C2FDDB /* oolite-enduser-configuration.xcconfig */; };
+		1A910F9B134C57B900FAD441 /* OOGEDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A910F9A134C57B900FAD441 /* OOGEDocument.m */; };
+		1A910FA0134C581C00FAD441 /* OOGEDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A910F9E134C581C00FAD441 /* OOGEDocument.xib */; };
+		1A910FD0134C5A3300FAD441 /* OOGEGalaxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A910FCF134C5A3300FAD441 /* OOGEGalaxy.m */; };
+		1A911092134C70DD00FAD441 /* OOGEGalaxy2DView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A911091134C70DD00FAD441 /* OOGEGalaxy2DView.m */; };
+		1A911366134F3B7D00FAD441 /* OOGEGalaxy3DView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A911365134F3B7D00FAD441 /* OOGEGalaxy3DView.m */; };
+		1A9113F4134F47D000FAD441 /* oolite-star-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A9113F3134F47D000FAD441 /* oolite-star-1.png */; };
+		1A91142E134F4A9900FAD441 /* OoliteGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A91142D134F4A9200FAD441 /* OoliteGraphics.framework */; };
+		1ADB321C122AF99D00F890B8 /* OOGEApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB321B122AF99D00F890B8 /* OOGEApplicationDelegate.m */; };
+		1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD582A0DA1D0D100B32029 /* MainMenu.xib */; };
+		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
+		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
+		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
+		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1A55BB81130B227B006C38DE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A55BB7A130B227A006C38DE /* OoliteBase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
+			remoteInfo = OoliteBase;
+		};
+		1A55BB95130B2292006C38DE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A55BB7A130B227A006C38DE /* OoliteBase.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = OoliteBase;
+		};
+		1A91142C134F4A9200FAD441 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A91141C134F4A9200FAD441 /* OoliteGraphics.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1AEA251111A73A9200B361DC;
+			remoteInfo = OoliteGraphics;
+		};
+		1A91142F134F4AA100FAD441 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A91141C134F4A9200FAD441 /* OoliteGraphics.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AEA251011A73A9200B361DC;
+			remoteInfo = OoliteGraphics;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1A17CF7111C16C7000F96041 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1A55BBBC130B22AC006C38DE /* OoliteBase.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		1A17CF2A11C16BB200F96041 /* oolite-shared-settings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "oolite-shared-settings.xcconfig"; path = "../../Config/oolite-shared-settings.xcconfig"; sourceTree = SOURCE_ROOT; };
+		1A17D17111C184F200F96041 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		1A17D19111C1854A00F96041 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		1A55BB7A130B227A006C38DE /* OoliteBase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OoliteBase.xcodeproj; path = OoliteBase/Mac/OoliteBase.xcodeproj; sourceTree = "<group>"; };
+		1A649F171323B33A00C2FDDB /* oolite-debug-configuration.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "oolite-debug-configuration.xcconfig"; path = "../../Config/oolite-debug-configuration.xcconfig"; sourceTree = SOURCE_ROOT; };
+		1A649F411323B80F00C2FDDB /* oolite-developer-configuration.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "oolite-developer-configuration.xcconfig"; path = "../../Config/oolite-developer-configuration.xcconfig"; sourceTree = SOURCE_ROOT; };
+		1A649F441323B87900C2FDDB /* oolite-enduser-configuration.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "oolite-enduser-configuration.xcconfig"; path = "../../Config/oolite-enduser-configuration.xcconfig"; sourceTree = SOURCE_ROOT; };
+		1A649FCE1323BE6B00C2FDDB /* oolite-version.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; name = "oolite-version.inc"; path = "../../Config/oolite-version.inc"; sourceTree = SOURCE_ROOT; };
+		1A910F99134C57B900FAD441 /* OOGEDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOGEDocument.h; sourceTree = "<group>"; };
+		1A910F9A134C57B900FAD441 /* OOGEDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOGEDocument.m; sourceTree = "<group>"; };
+		1A910F9F134C581C00FAD441 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/OOGEDocument.xib; sourceTree = "<group>"; };
+		1A910FCE134C5A3300FAD441 /* OOGEGalaxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOGEGalaxy.h; sourceTree = "<group>"; };
+		1A910FCF134C5A3300FAD441 /* OOGEGalaxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOGEGalaxy.m; sourceTree = "<group>"; };
+		1A911090134C70DD00FAD441 /* OOGEGalaxy2DView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOGEGalaxy2DView.h; sourceTree = "<group>"; };
+		1A911091134C70DD00FAD441 /* OOGEGalaxy2DView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOGEGalaxy2DView.m; sourceTree = "<group>"; };
+		1A911364134F3B7D00FAD441 /* OOGEGalaxy3DView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOGEGalaxy3DView.h; sourceTree = "<group>"; };
+		1A911365134F3B7D00FAD441 /* OOGEGalaxy3DView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOGEGalaxy3DView.m; sourceTree = "<group>"; };
+		1A9113F3134F47D000FAD441 /* oolite-star-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "oolite-star-1.png"; sourceTree = "<group>"; };
+		1A91141C134F4A9200FAD441 /* OoliteGraphics.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OoliteGraphics.xcodeproj; path = OoliteGraphics/Mac/OoliteGraphics.xcodeproj; sourceTree = "<group>"; };
+		1ADB321A122AF99D00F890B8 /* OOGEApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOGEApplicationDelegate.h; sourceTree = "<group>"; };
+		1ADB321B122AF99D00F890B8 /* OOGEApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOGEApplicationDelegate.m; sourceTree = "<group>"; };
+		1DDD582B0DA1D0D100B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		2564AD2C0F5327BB00F57823 /* GalaxyExtruder_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GalaxyExtruder_Prefix.pch; sourceTree = "<group>"; };
+		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
+		8D15AC360486D014006FF6A4 /* GalaxyExtruder-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; languageSpecificationIdentifier = html; lastKnownFileType = text.plist.xml; path = "GalaxyExtruder-Info.plist"; sourceTree = "<group>"; };
+		8D15AC370486D014006FF6A4 /* Galaxy Extruder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Galaxy Extruder.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D15AC330486D014006FF6A4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
+				1A17D17211C184F200F96041 /* OpenGL.framework in Frameworks */,
+				1A17D19211C1854A00F96041 /* Accelerate.framework in Frameworks */,
+				1A55BBBA130B229B006C38DE /* OoliteBase.framework in Frameworks */,
+				1A91142E134F4A9900FAD441 /* OoliteGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		19C28FB0FE9D524F11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D15AC370486D014006FF6A4 /* Galaxy Extruder.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A17D26F11C18F8C00F96041 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				1A910FCE134C5A3300FAD441 /* OOGEGalaxy.h */,
+				1A910FCF134C5A3300FAD441 /* OOGEGalaxy.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		1A17D27011C18F9000F96041 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				1A911090134C70DD00FAD441 /* OOGEGalaxy2DView.h */,
+				1A911091134C70DD00FAD441 /* OOGEGalaxy2DView.m */,
+				1A911364134F3B7D00FAD441 /* OOGEGalaxy3DView.h */,
+				1A911365134F3B7D00FAD441 /* OOGEGalaxy3DView.m */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		1A17D27111C18F9700F96041 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				1ADB321A122AF99D00F890B8 /* OOGEApplicationDelegate.h */,
+				1ADB321B122AF99D00F890B8 /* OOGEApplicationDelegate.m */,
+				1A910F99134C57B900FAD441 /* OOGEDocument.h */,
+				1A910F9A134C57B900FAD441 /* OOGEDocument.m */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		1A55BB77130B2265006C38DE /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				1A55BB7A130B227A006C38DE /* OoliteBase.xcodeproj */,
+				1A91141C134F4A9200FAD441 /* OoliteGraphics.xcodeproj */,
+			);
+			name = Components;
+			path = ../../Components;
+			sourceTree = "<group>";
+		};
+		1A55BB7B130B227A006C38DE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1A55BB82130B227B006C38DE /* OoliteBase.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A649F181323B33F00C2FDDB /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				1A649F171323B33A00C2FDDB /* oolite-debug-configuration.xcconfig */,
+				1A649F411323B80F00C2FDDB /* oolite-developer-configuration.xcconfig */,
+				1A649F441323B87900C2FDDB /* oolite-enduser-configuration.xcconfig */,
+				1A17CF2A11C16BB200F96041 /* oolite-shared-settings.xcconfig */,
+				1A649FCE1323BE6B00C2FDDB /* oolite-version.inc */,
+			);
+			name = Config;
+			sourceTree = "<group>";
+		};
+		1A91141D134F4A9200FAD441 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1A91142D134F4A9200FAD441 /* OoliteGraphics.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2A37F4AAFDCFA73011CA2CEA /* GalaxyExtruder */ = {
+			isa = PBXGroup;
+			children = (
+				1A649F181323B33F00C2FDDB /* Config */,
+				2A37F4ABFDCFA73011CA2CEA /* Classes */,
+				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
+				2A37F4B8FDCFA73011CA2CEA /* Resources */,
+				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
+				19C28FB0FE9D524F11CA2CBB /* Products */,
+			);
+			name = GalaxyExtruder;
+			sourceTree = "<group>";
+		};
+		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				1A17D26F11C18F8C00F96041 /* Model */,
+				1A17D27011C18F9000F96041 /* View */,
+				1A17D27111C18F9700F96041 /* Controller */,
+			);
+			name = Classes;
+			path = Source;
+			sourceTree = "<group>";
+		};
+		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				2564AD2C0F5327BB00F57823 /* GalaxyExtruder_Prefix.pch */,
+				2A37F4B0FDCFA73011CA2CEA /* main.m */,
+			);
+			name = "Other Sources";
+			path = Source;
+			sourceTree = "<group>";
+		};
+		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1A9113F3134F47D000FAD441 /* oolite-star-1.png */,
+				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
+				8D15AC360486D014006FF6A4 /* GalaxyExtruder-Info.plist */,
+				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
+				1DDD582A0DA1D0D100B32029 /* MainMenu.xib */,
+				1A910F9E134C581C00FAD441 /* OOGEDocument.xib */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1A55BB77130B2265006C38DE /* Components */,
+				1A17D19111C1854A00F96041 /* Accelerate.framework */,
+				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
+				1A17D17111C184F200F96041 /* OpenGL.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8D15AC270486D014006FF6A4 /* Galaxy Extruder */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "Galaxy Extruder" */;
+			buildPhases = (
+				8D15AC2B0486D014006FF6A4 /* Resources */,
+				1A17CF7111C16C7000F96041 /* Copy Frameworks */,
+				8D15AC300486D014006FF6A4 /* Sources */,
+				8D15AC330486D014006FF6A4 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1A55BB96130B2292006C38DE /* PBXTargetDependency */,
+				1A911430134F4AA100FAD441 /* PBXTargetDependency */,
+			);
+			name = "Galaxy Extruder";
+			productInstallPath = "$(HOME)/Applications";
+			productName = "Galaxy Extruder";
+			productReference = 8D15AC370486D014006FF6A4 /* Galaxy Extruder.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "the Oolite team";
+			};
+			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "GalaxyExtruder" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* GalaxyExtruder */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 1A55BB7B130B227A006C38DE /* Products */;
+					ProjectRef = 1A55BB7A130B227A006C38DE /* OoliteBase.xcodeproj */;
+				},
+				{
+					ProductGroup = 1A91141D134F4A9200FAD441 /* Products */;
+					ProjectRef = 1A91141C134F4A9200FAD441 /* OoliteGraphics.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				8D15AC270486D014006FF6A4 /* Galaxy Extruder */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		1A55BB82130B227B006C38DE /* OoliteBase.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OoliteBase.framework;
+			remoteRef = 1A55BB81130B227B006C38DE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1A91142D134F4A9200FAD441 /* OoliteGraphics.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OoliteGraphics.framework;
+			remoteRef = 1A91142C134F4A9200FAD441 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D15AC2B0486D014006FF6A4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */,
+				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
+				1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */,
+				1A649F451323B87900C2FDDB /* oolite-enduser-configuration.xcconfig in Resources */,
+				1A910FA0134C581C00FAD441 /* OOGEDocument.xib in Resources */,
+				1A9113F4134F47D000FAD441 /* oolite-star-1.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D15AC300486D014006FF6A4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D15AC320486D014006FF6A4 /* main.m in Sources */,
+				1ADB321C122AF99D00F890B8 /* OOGEApplicationDelegate.m in Sources */,
+				1A910F9B134C57B900FAD441 /* OOGEDocument.m in Sources */,
+				1A910FD0134C5A3300FAD441 /* OOGEGalaxy.m in Sources */,
+				1A911092134C70DD00FAD441 /* OOGEGalaxy2DView.m in Sources */,
+				1A911366134F3B7D00FAD441 /* OOGEGalaxy3DView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1A55BB96130B2292006C38DE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OoliteBase;
+			targetProxy = 1A55BB95130B2292006C38DE /* PBXContainerItemProxy */;
+		};
+		1A911430134F4AA100FAD441 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OoliteGraphics;
+			targetProxy = 1A91142F134F4AA100FAD441 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		089C165FFE840EACC02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C1660FE840EACC02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		1A910F9E134C581C00FAD441 /* OOGEDocument.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A910F9F134C581C00FAD441 /* English */,
+			);
+			name = OOGEDocument.xib;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		1DDD582A0DA1D0D100B32029 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1DDD582B0DA1D0D100B32029 /* English */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2A37F4BAFDCFA73011CA2CEA /* English */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1A1638B7134E21BC00003965 /* EndUser */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1A649F441323B87900C2FDDB /* oolite-enduser-configuration.xcconfig */;
+			buildSettings = {
+				OOLITE_ROOT = ../../;
+			};
+			name = EndUser;
+		};
+		1A1638B8134E21BC00003965 /* EndUser */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_OBJC_GC = required;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Source/GalaxyExtruder_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				INFOPLIST_FILE = "Resources/GalaxyExtruder-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "Galaxy Extruder";
+				VALID_ARCHS = x86_64;
+			};
+			name = EndUser;
+		};
+		C05733C808A9546B00998B17 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_OBJC_GC = required;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Source/GalaxyExtruder_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"OO_CHECK_GL_HEAVY=1",
+					$GCC_PREPROCESSOR_DEFINITIONS_CONFIG,
+				);
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				INFOPLIST_FILE = "Resources/GalaxyExtruder-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "Galaxy Extruder";
+				VALID_ARCHS = x86_64;
+			};
+			name = Debug;
+		};
+		C05733C908A9546B00998B17 /* Developer */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_OBJC_GC = required;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Source/GalaxyExtruder_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				INFOPLIST_FILE = "Resources/GalaxyExtruder-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "Galaxy Extruder";
+				VALID_ARCHS = x86_64;
+			};
+			name = Developer;
+		};
+		C05733CC08A9546B00998B17 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1A649F171323B33A00C2FDDB /* oolite-debug-configuration.xcconfig */;
+			buildSettings = {
+				OOLITE_ROOT = ../../;
+			};
+			name = Debug;
+		};
+		C05733CD08A9546B00998B17 /* Developer */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1A649F411323B80F00C2FDDB /* oolite-developer-configuration.xcconfig */;
+			buildSettings = {
+				OOLITE_ROOT = ../../;
+			};
+			name = Developer;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "Galaxy Extruder" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C05733C808A9546B00998B17 /* Debug */,
+				C05733C908A9546B00998B17 /* Developer */,
+				1A1638B8134E21BC00003965 /* EndUser */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Developer;
+		};
+		C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "GalaxyExtruder" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C05733CC08A9546B00998B17 /* Debug */,
+				C05733CD08A9546B00998B17 /* Developer */,
+				1A1638B7134E21BC00003965 /* EndUser */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Developer;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
+}
