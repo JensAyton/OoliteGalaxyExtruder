@@ -58,12 +58,18 @@
 
 - (NSData *) dataOfType:(NSString *)typeName error:(NSError **)outError
 {
-	// Insert code here to write your document to data of the specified type. If the given outError != NULL, ensure that you set *outError when returning nil.
-
-	// You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
-
-	// For applications targeted for Panther or earlier systems, you should use the deprecated API -dataRepresentationOfType:. In this case you can also choose to override -fileWrapperRepresentationOfType: or -writeToFile:ofType: instead.
-
+	if ([typeName isEqualToString:@"JSON Document"])
+	{
+		[self stop];
+		id plist = [self.galaxy propertyListRepresentation];
+		return [plist ooConfDataWithOptions:kOOConfGenerationJSONCompatible error:outError];
+	}
+	else if ([typeName isEqualToString:@"Compact JSON Document"])
+	{
+		[self stop];
+		id plist = [self.galaxy simplePropertyListRepresentation];
+		return [plist ooConfDataWithOptions:kOOConfGenerationJSONCompatible | kOOConfGenerationSmall error:outError];
+	}
 	return nil;
 }
 
@@ -77,6 +83,14 @@
 }
 
 
++ (NSArray *) writableTypes
+{
+	NSMutableArray *result = [[super writableTypes] mutableCopy];
+	[result addObject:@"Compact JSON Document"];
+	return result;
+}
+
+
 - (BOOL)  running
 {
 	return _timer != nil;
@@ -86,6 +100,7 @@
 - (IBAction) step:sender
 {
 	[self.galaxy simulateWithStep:0.1];
+	[self updateChangeCount:NSChangeDone];
 }
 
 
@@ -122,6 +137,7 @@
 	NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate];
 	[self.galaxy simulateWithStep:(now - _lastTime)];
 	_lastTime = now;
+	[self updateChangeCount:NSChangeDone];
 }
 
 
@@ -130,12 +146,14 @@
 	[self stop];
 	[self.galaxy reset];
 	[self.galaxy jiggleWithScale:0.1];
+	[self updateChangeCount:NSChangeDone];
 }
 
 
 - (IBAction) jiggle:sender
 {
 	[self.galaxy jiggleWithScale:1];
+	[self updateChangeCount:NSChangeDone];
 }
 
 @end

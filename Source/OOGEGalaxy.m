@@ -27,7 +27,7 @@ enum
 typedef struct OOGESystemRep
 {
 	Vector					originalPosition;
-	Vector					rawPosition;
+	Vector					rawOriginalPosition;
 	Vector					position;
 	Vector					velocity;
 	Vector					force;	// Physics note: we assume all nodes have the same mass, and arbitrarily set it to 1, so force == acceleration.
@@ -41,7 +41,7 @@ typedef struct OOGESystemRep
 
 OOINLINE float DesiredDistance(OOGESystemRep *a, OOGESystemRep *b)
 {
-	return distanceBetweenPlanetPositions(a->rawPosition.x, a->rawPosition.y, b->rawPosition.x, b->rawPosition.y);
+	return distanceBetweenPlanetPositions(a->rawOriginalPosition.x, a->rawOriginalPosition.y, b->rawOriginalPosition.x, b->rawOriginalPosition.y);
 }
 
 
@@ -228,6 +228,56 @@ static BOOL MakeSystem(OOGESystemRep *system, OOGEGalaxy *galaxy, unsigned idx, 
 		_systems[i].position = _systems[i].originalPosition;
 	}
 	[self sendChangedNotification];
+}
+
+
+- (id) propertyListRepresentation
+{
+	NSMutableArray *result = [NSMutableArray arrayWithCapacity:256];
+	
+	for (OOGESystem *system in self.systems)
+	{
+		NSMutableDictionary *dict = [system.propertyList mutableCopy];
+		Vector position = system.position;
+		position.x = position.x / 0.4 + 128;	// Undo loading transformations.
+		position.y = position.y / 0.2 + 128;
+		[dict setObject:$array($float(position.x), $float(position.y), $float(position.z)) forKey:@"coordinates"];
+		
+		position = system.rawOriginalPosition;
+		[dict setObject:$array($float(position.x), $float(position.y), $float(position.z)) forKey:@"original_coodinates"];
+		
+		[result addObject:dict];
+	}
+	
+	return result;
+}
+
+
+- (id) simplePropertyListRepresentation
+{
+	NSMutableArray *positions = [NSMutableArray arrayWithCapacity:256 * 3];
+	for (OOGESystem *system in self.systems)
+	{
+		Vector position = system.position;
+		[positions addObject:$float(position.x)];
+		[positions addObject:$float(position.y)];
+		[positions addObject:$float(position.z)];
+	}
+	
+	NSMutableArray *neighbours = [NSMutableArray array];
+	for (OOGESystem *system in self.systems)
+	{
+		for (OOGESystem *neighbour in system.neighbours)
+		{
+			if (system.index < neighbour.index)
+			{
+				[neighbours addObject:$int(system.index)];
+				[neighbours addObject:$int(neighbour.index)];
+			}
+		}
+	}
+	
+	return $dict(@"positions", positions, @"neighbours", neighbours);
 }
 
 
@@ -470,6 +520,12 @@ OOINLINE unsigned NextNeighbour(unsigned *nextNeighbourIndex, OOGESystemRep *sys
 }
 
 
+- (Vector) rawOriginalPosition
+{
+	return _rep->rawOriginalPosition;
+}
+
+
 - (Vector) velocity
 {
 	return _rep->velocity;
@@ -526,6 +582,12 @@ OOINLINE unsigned NextNeighbour(unsigned *nextNeighbourIndex, OOGESystemRep *sys
 }
 
 
+- (NSDictionary *) propertyList
+{
+	return _plist;
+}
+
+
 - (float) desiredDistanceTo:(OOGESystem *)other
 {
 	if (other == nil || other->_owningGalaxy != _owningGalaxy)
@@ -579,12 +641,32 @@ static BOOL MakeSystem(OOGESystemRep *system, OOGEGalaxy *galaxy, unsigned idx, 
 	system->position.x = [position oo_floatAtIndex:0];
 	system->position.y = [position oo_floatAtIndex:1];
 	system->position.z = [position oo_floatAtIndex:2];
-	system->rawPosition = system->position;
+	system->rawOriginalPosition = system->position;
 	
 	system->position.x = (system->position.x - 128) * 0.4;
 	system->position.y = (system->position.y - 128) * 0.2;
 	
-	system->originalPosition = system->position;
+	NSArray *originalPosition = [dict oo_arrayForKey:@"original_coordinates"];
+	if (originalPosition != NULL)
+	{
+		if (originalPosition == nil || originalPosition.count < 2 || originalPosition.count > 3)
+		{
+			SetErrorStructureInvalid(outError);
+			return NO;
+		}
+		
+		system->originalPosition.x = [position oo_floatAtIndex:0];
+		system->originalPosition.y = [position oo_floatAtIndex:1];
+		system->originalPosition.z = [position oo_floatAtIndex:2];
+		system->rawOriginalPosition = system->originalPosition;
+		
+		system->originalPosition.x = (system->position.x - 128) * 0.4;
+		system->originalPosition.y = (system->position.y - 128) * 0.2;
+	}
+	else
+	{
+		system->originalPosition = system->position;
+	}
 	
 	system->wrapper = [[OOGESystem alloc] initWithRep:system owner:galaxy plist:dict index:idx];
 	

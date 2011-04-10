@@ -50,6 +50,11 @@
 
 - (void) reset;
 
+- (id) propertyListRepresentation;
+
+// Property containing only positions and neighbour pair indices.
+- (id) simplePropertyListRepresentation;
+
 @end
 
 
@@ -66,10 +71,12 @@
 @property (readonly) NSString *name;
 @property Vector position;
 @property (readonly) Vector originalPosition;
+@property (readonly) Vector rawOriginalPosition;
 @property (readonly) Vector velocity;
 @property (readonly) Vector force;
 @property (readonly) NSColor *color;
 @property (readonly) NSArray *neighbours;
+@property (readonly) NSDictionary *propertyList;
 
 @property (readonly, getter=isConstrained) BOOL constrained;
 
