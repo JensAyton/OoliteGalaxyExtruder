@@ -14,7 +14,9 @@
 
 @interface OOGEGalaxy3DView ()
 
-- (void) finishInit;
+- (id) finishInit;
+
+- (void) galaxyChanged;
 
 - (void) renderParticles;
 
@@ -39,6 +41,9 @@ static void DrawAxes(BOOL inLabels, float inScale);
 #endif
 
 
+static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
+
+
 @implementation OOGEGalaxy3DView
 
 @synthesize drawForceVectors = _drawForceVectors;
@@ -48,7 +53,7 @@ static void DrawAxes(BOOL inLabels, float inScale);
 {
 	if ((self = [super initWithCoder:inCoder]))
 	{
-		[self finishInit];
+		self = [self finishInit];
 	}
 	return self;
 }
@@ -58,15 +63,23 @@ static void DrawAxes(BOOL inLabels, float inScale);
 {
     if ((self = [super initWithFrame:frame]))
 	{
-		[self finishInit];
+		self = [self finishInit];
     }
     return self;
 }
 
 
-- (void) finishInit
+- (id) finishInit
 {
 	[[self openGLContext] makeCurrentContext];
+	
+	unsigned major, minor, subminor;
+	GetGLVersion(&major, &minor, &subminor);
+	if (major == 1 && minor < 5)
+	{
+		OOLog(@"opengl.version", @"OpenGL 1.5 required.");
+		return nil;
+	}
 	
 	glEnable(GL_MULTISAMPLE_ARB);
 	glClearColor(0, 0, 0, 1);
@@ -80,6 +93,8 @@ static void DrawAxes(BOOL inLabels, float inScale);
 	NSImage *texture = [NSImage imageNamed:@"oolite-star-1"];
 	[self makeTextureFromImage:texture forTexture:&_texName];
 	CheckGLError(@"after loading point sprite texture");
+	
+	return self;
 }
 
 
@@ -154,87 +169,248 @@ static void DrawAxes(BOOL inLabels, float inScale);
 		}
 		
 		_galaxy = galaxy;
-		[self setNeedsDisplay:YES];
+		[self galaxyChanged];
 		
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(priv_galaxyChanged) name:kOOGEGalaxyChangedNotification object:galaxy];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(galaxyChanged) name:kOOGEGalaxyChangedNotification object:galaxy];
 	}
 }
 
 
-- (void) priv_galaxyChanged
+- (void) galaxyChanged
 {
 	[self setNeedsDisplay:YES];
+	
+	[[self openGLContext] makeCurrentContext];
+	
+	_starVBOUpToDate = NO;
+}
+
+
+- (void) updateStarVBOs
+{
+	if (_starVBO == 0)
+	{
+		OOGL(glGenBuffers(1, &_starVBO));
+		OOGL(glGenBuffers(1, &_starColorVBO));
+	}
+	
+	NSArray *systems = self.galaxy.systems;
+	size_t size = sizeof(*_starVBOData) * 3 * systems.count;
+	BOOL updateColor = NO;
+	
+	if (_starVBOSize != size)
+	{
+		_starVBOData = NSAllocateCollectable(size, 0);
+		_starColorVBOData = NSAllocateCollectable(size, 0);
+		if (_starVBOData == NULL || _starColorVBOData == NULL)  abort();
+		_starVBOSize = size;
+		updateColor = YES;
+	}
+	
+	GLfloat *next = _starVBOData;
+	for (OOGESystem *system in systems)
+	{
+		Vector p = system.position;
+		*next++ = p.x;
+		*next++ = p.y;
+		*next++ = p.z;
+	}
+	
+	OOGL(glBindBuffer(GL_ARRAY_BUFFER_ARB, _starVBO));
+	OOGL(glBufferData(GL_ARRAY_BUFFER_ARB, size, _starVBOData, GL_DYNAMIC_DRAW_ARB));
+	
+	if (updateColor)
+	{
+		next = _starColorVBOData;
+		for (OOGESystem *system in systems)
+		{
+			// Only RGB components, A is assumed to be 1.
+			GLfloat color[4];
+			[system getColorComponents:color];
+			*next++ = color[0];
+			*next++ = color[1];
+			*next++ = color[2];
+		}
+		
+		OOGL(glBindBuffer(GL_ARRAY_BUFFER_ARB, _starColorVBO));
+		OOGL(glBufferData(GL_ARRAY_BUFFER_ARB, size, _starColorVBOData, GL_STATIC_DRAW_ARB));
+	}
+	
+	_starVBOUpToDate = YES;
+}
+
+
+- (void) updateOriginalStarVBO
+{
+	if (_originalStarVBO == 0)
+	{
+		OOGL(glGenBuffers(1, &_originalStarVBO));
+	}
+	
+	NSArray *systems = self.galaxy.systems;
+	size_t size = sizeof(*_originalStarVBOData) * 3 * systems.count;
+	
+	if (_originalStarVBOSize != size)
+	{
+		_originalStarVBOData = NSAllocateCollectable(size, 0);
+		if (_originalStarVBOData == NULL)  abort();
+		_originalStarVBOSize = size;
+	}
+	
+	GLfloat *next = _originalStarVBOData;
+	for (OOGESystem *system in systems)
+	{
+		Vector p = system.originalPosition;
+		*next++ = p.x;
+		*next++ = p.y;
+		*next++ = p.z;
+	}
+	
+	OOGL(glBindBuffer(GL_ARRAY_BUFFER_ARB, _originalStarVBO));
+	OOGL(glBufferData(GL_ARRAY_BUFFER_ARB, size, _originalStarVBOData, GL_STATIC_DRAW_ARB));
+	
+	_starVBOUpToDate = YES;
+}
+
+
+- (void) updateRouteVBO
+{
+	if (_routesVBO == 0)
+	{
+		OOGL(glGenBuffers(1, &_routesVBO));
+	}
+	
+	NSArray *systems = self.galaxy.systems;
+	NSUInteger count = 0;
+	
+	// Count neighbour pairs.
+	for (OOGESystem *system in systems)
+	{
+		for (OOGESystem *neighbour in system.neighbours)
+		{
+			if (system.index < neighbour.index)
+			{
+				count++;
+			}
+		}
+	}
+	
+	if (count == 0)  return;
+	
+	_routesCount = count * 2;
+	
+	// Allocate buffer.
+	size_t size = sizeof(*_routesVBOData) * 2 * count;
+	if (_routesVBOSize != size)
+	{
+		_routesVBOData = NSAllocateCollectable(size, 0);
+		if (_routesVBOData == NULL)  abort();
+		_routesVBOSize = size;
+	}
+	
+	// Pack indices.
+	GLushort *next = _routesVBOData;
+	for (OOGESystem *system in systems)
+	{
+		GLushort sidx = system.index;
+		for (OOGESystem *neighbour in system.neighbours)
+		{
+			GLushort nidx = neighbour.index;
+			if (sidx < nidx)
+			{
+				*next++ = sidx;
+				*next++ = nidx;
+			}
+		}
+	}
+	
+	OOGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _routesVBO));
+	OOGL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, _routesVBOData, GL_STATIC_DRAW_ARB));
+	
+	_routesVBOUpToDate = YES;
 }
 
 
 - (void) renderParticles
 {
 	NSArray *systems = self.galaxy.systems;
+	NSUInteger count = systems.count;
+	if (count == 0)  return;
 	
-	// Draw routes and height vectors.
-	OOGLBEGIN(GL_LINES);
-	for (OOGESystem *system in systems)
-	{
-		Vector p = system.position;
-		for (OOGESystem *neighbour in system.neighbours)
-		{
-			if (system.index < neighbour.index)
-			{
-				Vector q = neighbour.position;
-				
-				BOOL outOfRange = [system actualDistanceTo:neighbour] > 7;
-				
-				if (outOfRange)  glColor3f(1.0, 0.5, 0.0);
-				else  glColor3f(0.333, 0.333, 0.333);
-				
-				glVertex3f(p.x, p.y, p.z);
-				glVertex3f(q.x, q.y, q.z);
-			}
-		}
-		
-		glColor3f(0.3, 0.1, 0.2);
-		glVertex3f(p.x, p.y, p.z);
-		glVertex3f(p.x, p.y, 0);
-	}
-	OOGLEND();
+	if (!_starVBOUpToDate)  [self updateStarVBOs];
+	if (!_originalStarVBOUpToDate)  [self updateOriginalStarVBO];
+	if (!_routesVBOUpToDate)  [self updateRouteVBO];
 	
-	// Draw unwanted routes.
-	OOGL(glColor3f(1, 0, 0));
+	OOGL(glEnableClientState(GL_VERTEX_ARRAY));
+	OOGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _routesVBO));
+	
+	// Draw original grid.
+	OOGL(glColor3f(0.1, 0.2, 0.2));
+	OOGL(glBindBuffer(GL_ARRAY_BUFFER, _originalStarVBO));
+	OOGL(glVertexPointer(3, GL_FLOAT, 0, 0));
+	OOGL(glDrawElements(GL_LINES, _routesCount, GL_UNSIGNED_SHORT, 0));
+	
+	// Draw current grid.
+	OOGL(glColor3f(0.333, 0.333, 0.333));
+	OOGL(glBindBuffer(GL_ARRAY_BUFFER, _starVBO));
+	OOGL(glVertexPointer(3, GL_FLOAT, 0, 0));
+	OOGL(glDrawElements(GL_LINES, _routesCount, GL_UNSIGNED_SHORT, 0));
+	
+	OOGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	
+	// Draw stars.
+	OOGL(glEnable(GL_TEXTURE_2D));
+	OOGL(glBindTexture(GL_TEXTURE_2D, _texName));
+	OOGL(glEnable(GL_POINT_SPRITE));
+	OOGL(glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE));
+	
+	OOGL(glEnableClientState(GL_COLOR_ARRAY));
+	OOGL(glBindBuffer(GL_ARRAY_BUFFER, _starColorVBO));
+	OOGL(glColorPointer(3, GL_FLOAT, 0, 0));
+	
+	OOGL(glDrawArrays(GL_POINTS, 0, count));
+	
+	OOGL(glDisableClientState(GL_VERTEX_ARRAY));
+	OOGL(glDisableClientState(GL_COLOR_ARRAY));
+	OOGL(glDisable(GL_POINT_SPRITE));
+	OOGL(glDisable(GL_TEXTURE_2D));
+	
+	OOGL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	
+	// Draw bad routes and height vectors.
 	OOGLBEGIN(GL_LINES);
-	unsigned count = systems.count;
-	for (unsigned i = 0; i < count; i++)
+	for (NSUInteger i = 0; i < count; i++)
 	{
 		OOGESystem *system = [systems objectAtIndex:i];
 		Vector p = system.position;
-		for (unsigned j = i + 1; j < count; j++)
+		for (NSUInteger j = i + 1; j < count; j++)
 		{
 			OOGESystem *other = [systems objectAtIndex:j];
 			Vector q = other.position;
-			if (distance2(p, q) < (7 * 7) && ![system hasNeighbour:other])
+			if ([system hasNeighbour:other])
 			{
-				glVertex3f(p.x, p.y, p.z);
-				glVertex3f(q.x, q.y, q.z);
+				if (distance2(p, q) > (7 * 7))
+				{
+					glColor3f(1.0, 0.2, 0.0);
+					glVertex3f(p.x, p.y, p.z);
+					glVertex3f(q.x, q.y, q.z);
+				}
+			}
+			else
+			{
+				if (distance2(p, q) <= (7 * 7))
+				{
+					glColor3f(0.8, 0.3, 0.3);
+					glVertex3f(p.x, p.y, p.z);
+					glVertex3f(q.x, q.y, q.z);
+				}
 			}
 		}
-	}
-	OOGLEND();
-	
-	// Draw original positions.
-	OOGL(glColor3f(0.1, 0.2, 0.2));
-	OOGLBEGIN(GL_LINES);
-	for (OOGESystem *system in systems)
-	{
-		Vector p = system.originalPosition;
-		for (OOGESystem *neighbour in system.neighbours)
-		{
-			if (system.index < neighbour.index)
-			{
-				Vector q = neighbour.originalPosition;
-				
-				glVertex3f(p.x, p.y, p.z);
-				glVertex3f(q.x, q.y, q.z);
-			}
-		}
+		
+		// Height vector.
+		glColor3f(0.3, 0.1, 0.2);
+		glVertex3f(p.x, p.y, p.z);
+		glVertex3f(p.x, p.y, 0);
 	}
 	OOGLEND();
 	
@@ -253,26 +429,6 @@ static void DrawAxes(BOOL inLabels, float inScale);
 		}
 		OOGLEND();
 	}
-	
-	OOGL(glEnable(GL_TEXTURE_2D));
-	OOGL(glBindTexture(GL_TEXTURE_2D, _texName));
-	OOGL(glEnable(GL_POINT_SPRITE));
-	OOGL(glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE));
-	
-	// Draw stars.
-	OOGLBEGIN(GL_POINTS);
-	for (OOGESystem *system in systems)
-	{
-		Vector p = system.position;
-		float components[4];
-		[system getColorComponents:components];
-		glColor4fv(components);
-		glVertex3f(p.x, p.y, p.z);
-	}
-	OOGLEND();
-	
-	OOGL(glDisable(GL_POINT_SPRITE));
-	OOGL(glDisable(GL_TEXTURE_2D));
 }
 
 
@@ -411,3 +567,47 @@ static void CheckGLError(NSString *context)
 	}
 }
 #endif
+
+
+static unsigned IntegerFromString(const GLubyte **ioString)
+{
+	if (EXPECT_NOT(ioString == NULL))  return 0;
+	
+	unsigned		result = 0;
+	const GLubyte	*curr = *ioString;
+	
+	while ('0' <= *curr && *curr <= '9')
+	{
+		result = result * 10 + *curr++ - '0';
+	}
+	
+	*ioString = curr;
+	return result;
+}
+
+
+static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor)
+{
+	NSCParameterAssert(major != NULL && minor != NULL && subminor != NULL);
+	
+	*major = 0;
+	*minor = 0;
+	*subminor = 0;
+	
+	const GLubyte *version = glGetString(GL_VERSION);
+	
+	if (version != NULL)
+	{
+		*major = IntegerFromString(&version);
+		if (*version == '.')
+		{
+			version++;
+			*minor = IntegerFromString(&version);
+		}
+		if (*version == '.')
+		{
+			version++;
+			*subminor = IntegerFromString(&version);
+		}
+	}
+}

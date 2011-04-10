@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <OoliteGraphics/OoliteGraphics.h>
 
 @class OOGEGalaxy, OOTexture;
 
@@ -14,9 +15,29 @@
 @interface OOGEGalaxy3DView : NSOpenGLView
 {
 @private
-	OOGEGalaxy					*_galaxy;
-	float						_xrot, _yrot;
-	unsigned					_texName;
+	OOGEGalaxy						*_galaxy;
+	GLfloat							_xrot, _yrot;
+	GLuint							_texName;
+	
+	__strong GLfloat				*_starVBOData;
+	size_t							_starVBOSize;
+	GLuint							_starVBO;
+	
+	__strong GLfloat				*_starColorVBOData;
+	GLuint							_starColorVBO;
+	
+	__strong GLfloat				*_originalStarVBOData;
+	size_t							_originalStarVBOSize;
+	GLuint							_originalStarVBO;
+	
+	__strong GLushort				*_routesVBOData;
+	size_t							_routesVBOSize;
+	GLsizei							_routesCount;
+	GLuint							_routesVBO;
+	
+	BOOL							_starVBOUpToDate;
+	BOOL							_originalStarVBOUpToDate;
+	BOOL							_routesVBOUpToDate;
 }
 
 @property OOGEGalaxy *galaxy;
