@@ -28,7 +28,7 @@
 @end
 
 
-#define DRAW_AXES 1
+#define DRAW_AXES 0
 
 
 #ifndef NDEBUG
@@ -49,7 +49,7 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 
 @implementation OOGEGalaxy3DView
 
-@synthesize drawForceVectors = _drawForceVectors;
+@synthesize drawForceVectors = _drawForceVectors, drawOriginalGrid = _drawOriginalGrid, drawGrid = _drawGrid, drawStars = _drawStars, drawHeightVectors = _drawHeightVectors, drawConflicts = _drawConflicts;
 
 
 - (id)initWithCoder:(NSCoder *)inCoder
@@ -90,13 +90,17 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	glEnable(GL_POINT_SMOOTH);
 	CheckGLError(@"after initial setup");
 	
-	_xrot = 30;
-	_yrot = -45;
-	_cameraRotation = kIdentityMatrix;
+	_cameraRotation = OOMatrixForRotationX(M_PI);
 	
 	NSImage *texture = [NSImage imageNamed:@"oolite-star-1"];
 	[self makeTextureFromImage:texture forTexture:&_texName];
 	CheckGLError(@"after loading point sprite texture");
+	
+	self.drawOriginalGrid = YES;
+	self.drawGrid = YES;
+	self.drawStars = YES;
+	self.drawHeightVectors = YES;
+	self.drawConflicts = YES;
 	
 	return self;
 }
@@ -113,10 +117,6 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	glTranslatef(0.0f, 0.0f, -100.0f);
 	OOGL(glMultMatrixf((&(_cameraRotation).m[0][0])));
 	
-	/*
-	glRotatef(_xrot, 1.0f, 0.0f, 0.0f);
-	glRotatef(_yrot, 0.0f, 1.0f, 0.0f);
-	glScalef(1.0, -1.0, 1.0);*/
 	CheckGLError(@"setting up model view matrix");
 	
 	// Draw
@@ -280,6 +280,48 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 }
 
 
+- (void) setDrawForceVectors:(BOOL)value
+{
+	_drawForceVectors = value;
+	[self displaySettingsChanged];
+}
+
+
+- (void) setDrawOriginalGrid:(BOOL)value
+{
+	_drawOriginalGrid = value;
+	[self displaySettingsChanged];
+}
+
+
+- (void) setDrawGrid:(BOOL)value
+{
+	_drawGrid = value;
+	[self displaySettingsChanged];
+}
+
+
+- (void) setDrawStars:(BOOL)value
+{
+	_drawStars = value;
+	[self displaySettingsChanged];
+}
+
+
+- (void) setDrawHeightVectors:(BOOL)value
+{
+	_drawHeightVectors = value;
+	[self displaySettingsChanged];
+}
+
+
+- (void) setDrawConflicts:(BOOL)value
+{
+	_drawConflicts = value;
+	[self displaySettingsChanged];
+}
+
+
 - (void) displaySettingsChanged
 {
 	[self setNeedsDisplay:YES];
@@ -324,12 +366,12 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 		next = _starColorVBOData;
 		for (OOGESystem *system in systems)
 		{
-			// Only RGB components, A is assumed to be 1.
 			GLfloat color[4];
 			[system getColorComponents:color];
-			*next++ = color[0];
-			*next++ = color[1];
-			*next++ = color[2];
+			GLfloat alpha = color[3] * 0.7f;
+			*next++ = color[0] * alpha;
+			*next++ = color[1] * alpha;
+			*next++ = color[2] * alpha;
 		}
 		
 		OOGL(glBindBuffer(GL_ARRAY_BUFFER_ARB, _starColorVBO));
@@ -441,78 +483,113 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	if (!_originalStarVBOUpToDate)  [self updateOriginalStarVBO];
 	if (!_routesVBOUpToDate)  [self updateRouteVBO];
 	
-	OOGL(glEnableClientState(GL_VERTEX_ARRAY));
-	OOGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _routesVBO));
+	BOOL drawOriginalGrid = self.drawOriginalGrid;
+	BOOL drawGrid = self.drawGrid;
+	BOOL drawStars = self.drawStars;
 	
-	// Draw original grid.
-	OOGL(glColor3f(0.1, 0.2, 0.2));
-	OOGL(glBindBuffer(GL_ARRAY_BUFFER, _originalStarVBO));
-	OOGL(glVertexPointer(3, GL_FLOAT, 0, 0));
-	OOGL(glDrawElements(GL_LINES, _routesCount, GL_UNSIGNED_SHORT, 0));
+	if (drawOriginalGrid || drawGrid)
+	{
+		OOGL(glEnableClientState(GL_VERTEX_ARRAY));
+		OOGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _routesVBO));
+	}
 	
-	// Draw current grid.
-	OOGL(glColor3f(0.333, 0.333, 0.333));
-	OOGL(glBindBuffer(GL_ARRAY_BUFFER, _starVBO));
-	OOGL(glVertexPointer(3, GL_FLOAT, 0, 0));
-	OOGL(glDrawElements(GL_LINES, _routesCount, GL_UNSIGNED_SHORT, 0));
+	if (drawOriginalGrid)
+	{
+		// Draw original grid.
+		OOGL(glColor3f(0.15, 0.15, 0.15));
+		OOGL(glBindBuffer(GL_ARRAY_BUFFER, _originalStarVBO));
+		OOGL(glVertexPointer(3, GL_FLOAT, 0, 0));
+		OOGL(glDrawElements(GL_LINES, _routesCount, GL_UNSIGNED_SHORT, 0));
+	}
 	
-	OOGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	if (drawGrid || drawStars)
+	{
+		OOGL(glBindBuffer(GL_ARRAY_BUFFER, _starVBO));
+		OOGL(glVertexPointer(3, GL_FLOAT, 0, 0));
+	}
 	
-	// Draw stars.
-	OOGL(glEnable(GL_TEXTURE_2D));
-	OOGL(glBindTexture(GL_TEXTURE_2D, _texName));
-	OOGL(glEnable(GL_POINT_SPRITE));
-	OOGL(glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE));
+	if (drawGrid)
+	{
+		// Draw current grid.
+		OOGL(glColor3f(0.15f, 0.25f, 0.25f));
+		OOGL(glDrawElements(GL_LINES, _routesCount, GL_UNSIGNED_SHORT, 0));
+	}
 	
-	OOGL(glEnableClientState(GL_COLOR_ARRAY));
-	OOGL(glBindBuffer(GL_ARRAY_BUFFER, _starColorVBO));
-	OOGL(glColorPointer(3, GL_FLOAT, 0, 0));
+	if (drawOriginalGrid || drawGrid)
+	{
+		OOGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	}
 	
-	OOGL(glDrawArrays(GL_POINTS, 0, count));
-	
-	OOGL(glDisableClientState(GL_VERTEX_ARRAY));
-	OOGL(glDisableClientState(GL_COLOR_ARRAY));
-	OOGL(glDisable(GL_POINT_SPRITE));
-	OOGL(glDisable(GL_TEXTURE_2D));
+	if (drawStars)
+	{
+		// Draw stars.
+		OOGL(glEnable(GL_TEXTURE_2D));
+		OOGL(glBindTexture(GL_TEXTURE_2D, _texName));
+		OOGL(glEnable(GL_POINT_SPRITE));
+		OOGL(glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE));
+		
+		OOGL(glEnableClientState(GL_COLOR_ARRAY));
+		OOGL(glBindBuffer(GL_ARRAY_BUFFER, _starColorVBO));
+		OOGL(glColorPointer(3, GL_FLOAT, 0, 0));
+		
+		OOGL(glDrawArrays(GL_POINTS, 0, count));
+		
+		OOGL(glDisableClientState(GL_VERTEX_ARRAY));
+		OOGL(glDisableClientState(GL_COLOR_ARRAY));
+		OOGL(glDisable(GL_POINT_SPRITE));
+		OOGL(glDisable(GL_TEXTURE_2D));
+	}
 	
 	OOGL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	
-	// Draw bad routes and height vectors.
-	OOGLBEGIN(GL_LINES);
-	for (NSUInteger i = 0; i < count; i++)
+	if (self.drawConflicts)
 	{
-		OOGESystem *system = [systems objectAtIndex:i];
-		Vector p = system.position;
-		for (NSUInteger j = i + 1; j < count; j++)
+		// Draw bad routes and height vectors.
+		OOGLBEGIN(GL_LINES);
+		for (NSUInteger i = 0; i < count; i++)
 		{
-			OOGESystem *other = [systems objectAtIndex:j];
-			Vector q = other.position;
-			if ([system hasNeighbour:other])
+			OOGESystem *system = [systems objectAtIndex:i];
+			Vector p = system.position;
+			for (NSUInteger j = i + 1; j < count; j++)
 			{
-				if (distance2(p, q) > (7 * 7))
+				OOGESystem *other = [systems objectAtIndex:j];
+				Vector q = other.position;
+				if ([system hasNeighbour:other])
 				{
-					glColor3f(1.0, 0.2, 0.0);
-					glVertex3f(p.x, p.y, p.z);
-					glVertex3f(q.x, q.y, q.z);
+					if (distance2(p, q) > (7 * 7))
+					{
+						glColor3f(1.0, 0.2, 0.0);
+						glVertex3f(p.x, p.y, p.z);
+						glVertex3f(q.x, q.y, q.z);
+					}
 				}
-			}
-			else
-			{
-				if (distance2(p, q) <= (7 * 7))
+				else
 				{
-					glColor3f(0.8, 0.3, 0.3);
-					glVertex3f(p.x, p.y, p.z);
-					glVertex3f(q.x, q.y, q.z);
+					if (distance2(p, q) <= (7 * 7))
+					{
+						glColor3f(0.8, 0.3, 0.3);
+						glVertex3f(p.x, p.y, p.z);
+						glVertex3f(q.x, q.y, q.z);
+					}
 				}
 			}
 		}
-		
-		// Height vector.
-		glColor3f(0.3, 0.1, 0.2);
-		glVertex3f(p.x, p.y, p.z);
-		glVertex3f(p.x, p.y, 0);
+		OOGLEND();
 	}
-	OOGLEND();
+	
+	if (self.drawHeightVectors)
+	{
+		// Draw bad routes and height vectors.
+		glColor3f(0.3, 0.1, 0.2);
+		OOGLBEGIN(GL_LINES);
+		for (OOGESystem *system in systems)
+		{
+			Vector p = system.position;
+			glVertex3f(p.x, p.y, p.z);
+			glVertex3f(p.x, p.y, 0);
+		}
+		OOGLEND();
+	}
 	
 	if (self.drawForceVectors)
 	{

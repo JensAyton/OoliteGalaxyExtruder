@@ -16,7 +16,6 @@
 {
 @private
 	OOGEGalaxy						*_galaxy;
-	GLfloat							_xrot, _yrot;
 	Vector							_dragPoint;
 	OOMatrix						_cameraRotation;
 	
@@ -43,8 +42,13 @@
 	BOOL							_routesVBOUpToDate;
 }
 
-@property OOGEGalaxy *galaxy;
+@property (nonatomic) OOGEGalaxy *galaxy;
 
-@property BOOL drawForceVectors;
+@property (nonatomic) BOOL drawForceVectors;
+@property (nonatomic) BOOL drawOriginalGrid;
+@property (nonatomic) BOOL drawGrid;
+@property (nonatomic) BOOL drawStars;
+@property (nonatomic) BOOL drawHeightVectors;
+@property (nonatomic) BOOL drawConflicts;
 
 @end
