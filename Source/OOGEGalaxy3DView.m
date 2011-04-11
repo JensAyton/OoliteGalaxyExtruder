@@ -486,9 +486,10 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	BOOL drawGrid = self.drawGrid;
 	BOOL drawStars = self.drawStars;
 	
+	OOGL(glEnableClientState(GL_VERTEX_ARRAY));
+	
 	if (drawOriginalGrid || drawGrid)
 	{
-		OOGL(glEnableClientState(GL_VERTEX_ARRAY));
 		OOGL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _routesVBO));
 	}
 	
