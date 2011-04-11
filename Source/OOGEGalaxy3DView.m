@@ -17,10 +17,13 @@
 - (id) finishInit;
 
 - (void) galaxyChanged;
+- (void) displaySettingsChanged;
 
 - (void) renderParticles;
 
 -(void) makeTextureFromImage:(NSImage*)theImg forTexture:(GLuint*)texName;
+
+- (Vector) virtualTrackballLocationForPoint:(NSPoint)point;
 
 @end
 
@@ -89,6 +92,7 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	
 	_xrot = 30;
 	_yrot = -45;
+	_cameraRotation = kIdentityMatrix;
 	
 	NSImage *texture = [NSImage imageNamed:@"oolite-star-1"];
 	[self makeTextureFromImage:texture forTexture:&_texName];
@@ -105,11 +109,14 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	// Set up camera
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef(0.0f, 0.0f, -100.0f);
 	
+	glTranslatef(0.0f, 0.0f, -100.0f);
+	OOGL(glMultMatrixf((&(_cameraRotation).m[0][0])));
+	
+	/*
 	glRotatef(_xrot, 1.0f, 0.0f, 0.0f);
 	glRotatef(_yrot, 0.0f, 1.0f, 0.0f);
-	glScalef(1.0, -1.0, 1.0);
+	glScalef(1.0, -1.0, 1.0);*/
 	CheckGLError(@"setting up model view matrix");
 	
 	// Draw
@@ -153,6 +160,93 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 }
 
 
+- (void) beginDragForEvent:(NSEvent *)event
+{
+	NSPoint where = [self convertPoint:event.locationInWindow fromView:nil];
+	_dragPoint = [self virtualTrackballLocationForPoint:where];
+}
+
+
+- (void)handleDragEvent:(NSEvent *)event
+{
+	NSPoint where = [self convertPoint:event.locationInWindow fromView:nil];
+	Vector newDragPoint = [self virtualTrackballLocationForPoint:where];
+	Vector delta = vector_subtract(newDragPoint, _dragPoint);
+	
+	if (0.00001f < magnitude2(delta))
+	{
+		// Rotate about the axis that is perpendicular to the great circle connecting the mouse points.
+		Vector axis = cross_product(_dragPoint, newDragPoint);
+		_cameraRotation = OOMatrixRotate(_cameraRotation, axis, magnitude(delta));
+		_cameraRotation = OOMatrixOrthogonalize(_cameraRotation);
+		
+		[self displaySettingsChanged];
+		_dragPoint = newDragPoint;
+	}
+}
+
+
+- (void) endDrag
+{
+	[self displaySettingsChanged];
+}
+
+
+- (void)mouseDown:(NSEvent *)theEvent
+{
+	if (NSControlKeyMask == [theEvent modifierFlags]) [super mouseDown:theEvent];	// Pass through for contextual menu handling
+	else [self beginDragForEvent:theEvent];
+}
+
+
+- (void)rightMouseDown:(NSEvent *)theEvent
+{
+	[self beginDragForEvent:theEvent];
+}
+
+
+- (void)otherMouseDown:(NSEvent *)theEvent
+{
+	[self beginDragForEvent:theEvent];
+}
+
+
+- (void)mouseUp:(NSEvent *)theEvent
+{
+	[self endDrag];
+}
+
+
+- (void)rightMouseUp:(NSEvent *)theEvent
+{
+	[self endDrag];
+}
+
+
+- (void)otherMouseUp:(NSEvent *)theEvent
+{
+	[self endDrag];
+}
+
+
+- (void)mouseDragged:(NSEvent *)theEvent
+{
+	[self handleDragEvent:theEvent];
+}
+
+
+- (void)rightMouseDragged:(NSEvent *)theEvent
+{
+	[self handleDragEvent:theEvent];
+}
+
+
+- (void)otherMouseDragged:(NSEvent *)theEvent
+{
+	[self handleDragEvent:theEvent];
+}
+
+
 - (OOGEGalaxy *) galaxy
 {
 	return _galaxy;
@@ -183,6 +277,12 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	[[self openGLContext] makeCurrentContext];
 	
 	_starVBOUpToDate = NO;
+}
+
+
+- (void) displaySettingsChanged
+{
+	[self setNeedsDisplay:YES];
 }
 
 
@@ -429,6 +529,23 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 		}
 		OOGLEND();
 	}
+}
+
+
+- (Vector) virtualTrackballLocationForPoint:(NSPoint)point
+{
+	NSSize size = self.frame.size;
+	
+	Vector result;
+	result.x = (2.0f * point.x - size.width) / size.width;
+	result.y = (2.0f * point.y - size.height) / size.height;
+	result.z = 0;
+	
+	float d = magnitude2(result);
+	d = fmaxf(1.0f, d);
+	result.z = sqrtf(1.0001f - d);
+	
+	return vector_normal(result);
 }
 
 

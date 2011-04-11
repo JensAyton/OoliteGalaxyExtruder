@@ -17,6 +17,9 @@
 @private
 	OOGEGalaxy						*_galaxy;
 	GLfloat							_xrot, _yrot;
+	Vector							_dragPoint;
+	OOMatrix						_cameraRotation;
+	
 	GLuint							_texName;
 	
 	__strong GLfloat				*_starVBOData;

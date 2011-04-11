@@ -358,7 +358,7 @@ OOINLINE Vector SpringForce(Vector posA, Vector velA, Vector posB, Vector velB, 
 		}
 		
 		Vector pinPos = system->originalPosition;
-		pinPos.z = pos.z * 0.9;
+		pinPos.z = pos.z * 0.99;
 		if (!vector_equal(pos, pinPos))
 		{
 			Vector pinForce = SpringForce(pos, system->velocity, pinPos, kZeroVector, 0, pinWeight, springDamping, 2);
