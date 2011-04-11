@@ -619,7 +619,7 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	result.z = 0;
 	
 	float d = magnitude2(result);
-	d = fmaxf(1.0f, d);
+	d = fminf(1.0f, d);
 	result.z = sqrtf(1.0001f - d);
 	
 	return vector_normal(result);
