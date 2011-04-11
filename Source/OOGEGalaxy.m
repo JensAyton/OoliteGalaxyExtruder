@@ -264,6 +264,16 @@ static BOOL MakeSystem(OOGESystemRep *system, OOGEGalaxy *galaxy, unsigned idx, 
 		[positions addObject:$float(position.z)];
 	}
 	
+	NSMutableArray *colors = [NSMutableArray arrayWithCapacity:256 * 3];
+	for (OOGESystem *system in self.systems)
+	{
+		GLfloat components[4];
+		[system getColorComponents:components];
+		[colors addObject:$float(components[0])];
+		[colors addObject:$float(components[1])];
+		[colors addObject:$float(components[2])];
+	}
+	
 	NSMutableArray *neighbours = [NSMutableArray array];
 	for (OOGESystem *system in self.systems)
 	{
@@ -277,7 +287,7 @@ static BOOL MakeSystem(OOGESystemRep *system, OOGEGalaxy *galaxy, unsigned idx, 
 		}
 	}
 	
-	return $dict(@"positions", positions, @"neighbours", neighbours);
+	return $dict(@"positions", positions, @"colors", colors, @"neighbours", neighbours);
 }
 
 
