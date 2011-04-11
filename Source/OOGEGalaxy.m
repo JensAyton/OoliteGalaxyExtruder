@@ -57,6 +57,7 @@ static BOOL MakeSystem(OOGESystemRep *system, OOGEGalaxy *galaxy, unsigned idx, 
 
 - (void) clearSimulationState;
 - (void) applySpringForces;
+- (void) applyPlaneAttraction;
 - (void) applyAntiGravity;
 - (void) integrateWithStep:(float)timeStep;
 - (void) applyNeighbourConstraints;
@@ -67,7 +68,7 @@ static BOOL MakeSystem(OOGESystemRep *system, OOGEGalaxy *galaxy, unsigned idx, 
 @implementation OOGEGalaxy
 
 @synthesize systems = _wrappers;
-@synthesize damping = _damping, drag = _drag, neighbourWeight = _neighbourWeight, pinWeight = _pinWeight, constraintWeight = _constraintWeight, antiGravityStrength = _antiGravityStrength;
+@synthesize damping = _damping, drag = _drag, neighbourWeight = _neighbourWeight, pinWeight = _pinWeight, constraintWeight = _constraintWeight, antiGravityStrength = _antiGravityStrength, planeAttractionStrength = _planeAttractionStrength;
 
 
 + (id) galaxyFromPropertyList:(id)propertyList error:(NSError **)outError
@@ -298,6 +299,7 @@ static BOOL MakeSystem(OOGESystemRep *system, OOGEGalaxy *galaxy, unsigned idx, 
 		[self clearSimulationState];
 		[self applySpringForces];
 		[self applyAntiGravity];
+		[self applyPlaneAttraction];
 		[self applyNeighbourConstraints];
 		[self integrateWithStep:timeStep];
 	}
@@ -368,7 +370,7 @@ OOINLINE Vector SpringForce(Vector posA, Vector velA, Vector posB, Vector velB, 
 		}
 		
 		Vector pinPos = system->originalPosition;
-		pinPos.z = pos.z * 0.99;
+		pinPos.z = pos.z;
 		if (!vector_equal(pos, pinPos))
 		{
 			Vector pinForce = SpringForce(pos, system->velocity, pinPos, kZeroVector, 0, pinWeight, springDamping, 2);
@@ -396,6 +398,22 @@ OOINLINE unsigned NextNeighbour(unsigned *nextNeighbourIndex, OOGESystemRep *sys
 {
 	if (*nextNeighbourIndex == system->neighbourCount)  return 256;
 	return system->neighbours[(*nextNeighbourIndex)++];
+}
+
+
+- (void) applyPlaneAttraction
+{
+	float planeAttractionStrength = -self.planeAttractionStrength;
+	if (planeAttractionStrength == 0)  return;
+	
+	for (unsigned i = 0; i < 256; i++)
+	{
+		OOGESystemRep *system = &_systems[i];
+		
+		float strength = system->position.z;
+		strength = strength * fabsf(strength) * planeAttractionStrength;
+		system->force.z += strength;
+	}
 }
 
 

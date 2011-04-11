@@ -96,7 +96,6 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	[self makeTextureFromImage:texture forTexture:&_texName];
 	CheckGLError(@"after loading point sprite texture");
 	
-	self.drawOriginalGrid = YES;
 	self.drawGrid = YES;
 	self.drawStars = YES;
 	self.drawHeightVectors = YES;

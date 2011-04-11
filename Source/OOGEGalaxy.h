@@ -33,6 +33,7 @@
 @property float pinWeight;
 @property float constraintWeight;
 @property float antiGravityStrength;
+@property float planeAttractionStrength;
 
 
 + (id) galaxyFromPropertyList:(id)propertyList error:(NSError **)outError;
