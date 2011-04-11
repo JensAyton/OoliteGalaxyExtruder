@@ -568,7 +568,7 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	
 	if (self.drawConflicts)
 	{
-		// Draw bad routes and height vectors.
+		// Draw bad routes.
 		OOGLBEGIN(GL_LINES);
 		for (NSUInteger i = 0; i < count; i++)
 		{
@@ -591,7 +591,7 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 				{
 					if (distance2(p, q) <= (7 * 7))
 					{
-						glColor3f(0.8, 0.3, 0.3);
+						glColor3f(0.8, 0.3, 0.5);
 						glVertex3f(p.x, p.y, p.z);
 						glVertex3f(q.x, q.y, q.z);
 					}
@@ -603,8 +603,8 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	
 	if (self.drawHeightVectors)
 	{
-		// Draw bad routes and height vectors.
-		glColor3f(0.3, 0.1, 0.2);
+		// Draw height vectors.
+		glColor3f(0.1, 0.3, 0.15);
 		OOGLBEGIN(GL_LINES);
 		for (OOGESystem *system in systems)
 		{
