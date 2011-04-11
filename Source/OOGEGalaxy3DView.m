@@ -30,6 +30,8 @@
 
 #define DRAW_AXES 0
 
+#define kZoomFactor (1.2f)
+
 
 #ifndef NDEBUG
 static void CheckGLError(NSString *context);
@@ -91,6 +93,7 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	CheckGLError(@"after initial setup");
 	
 	_cameraRotation = OOMatrixForRotationX(M_PI);
+	_drawDistance = 100.0f;
 	
 	NSImage *texture = [NSImage imageNamed:@"oolite-star-1"];
 	[self makeTextureFromImage:texture forTexture:&_texName];
@@ -113,7 +116,7 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
-	glTranslatef(0.0f, 0.0f, -100.0f);
+	glTranslatef(0.0f, 0.0f, -_drawDistance);
 	OOGL(glMultMatrixf((&(_cameraRotation).m[0][0])));
 	
 	CheckGLError(@"setting up model view matrix");
@@ -149,7 +152,7 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-	gluPerspective(45.0, dimensions.width / dimensions.height, 0.1, 300.0);
+	gluPerspective(45.0, dimensions.width / dimensions.height, 0.1, 10000.0);
 }
 
 
@@ -243,6 +246,27 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 - (void)otherMouseDragged:(NSEvent *)theEvent
 {
 	[self handleDragEvent:theEvent];
+}
+
+
+- (IBAction) zoomIn:sender
+{
+	_drawDistance /= kZoomFactor;
+	[self displaySettingsChanged];
+}
+
+
+- (IBAction) zoomOut:sender
+{
+	_drawDistance *= kZoomFactor;
+	[self displaySettingsChanged];
+}
+
+
+- (void) magnifyWithEvent:(NSEvent *)event
+{
+	_drawDistance *= 1.0 + event.magnification;
+	[self displaySettingsChanged];
 }
 
 

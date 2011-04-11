@@ -18,6 +18,7 @@
 	OOGEGalaxy						*_galaxy;
 	Vector							_dragPoint;
 	OOMatrix						_cameraRotation;
+	float							_drawDistance;
 	
 	GLuint							_texName;
 	
@@ -50,5 +51,9 @@
 @property (nonatomic) BOOL drawStars;
 @property (nonatomic) BOOL drawHeightVectors;
 @property (nonatomic) BOOL drawConflicts;
+
+
+- (IBAction) zoomIn:sender;
+- (IBAction) zoomOut:sender;
 
 @end

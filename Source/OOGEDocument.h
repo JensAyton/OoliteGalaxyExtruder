@@ -33,4 +33,7 @@
 - (IBAction) reset:sender;
 - (IBAction) jiggle:sender;
 
+- (IBAction) zoomIn:sender;
+- (IBAction) zoomOut:sender;
+
 @end

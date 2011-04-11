@@ -156,4 +156,16 @@
 	[self updateChangeCount:NSChangeDone];
 }
 
+
+- (IBAction) zoomIn:sender
+{
+	[self.galaxy3DView zoomIn:sender];
+}
+
+
+- (IBAction) zoomOut:sender
+{
+	[self.galaxy3DView zoomOut:sender];
+}
+
 @end
