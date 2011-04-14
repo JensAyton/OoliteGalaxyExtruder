@@ -197,7 +197,7 @@ Object.defineProperty(self, "route",
 		var err;
 		while (err = this.getError())
 		{
-			this.console.log("GL error (" + context + "): " + err);
+			console.log("GL error (" + context + "): " + err);
 		}
 	}
 	
@@ -240,67 +240,70 @@ function renderFrame()
 	
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
-	mvMatrix.makeIdentity();
-	mvMatrix.multiply(rotMatrix);
-	
-	if (projectionDirty)
+	if (starVBO)
 	{
-		pMatrix.perspective(30, canvas.width/canvas.height, 1, 1000);
-		pMatrix.lookat(0, 0, viewDistance, 0, 0, 0, 0, 1, 0);
-		particleBaseSize = canvas.height * 4 / viewDistance;
-		projectionDirty = false;
-	}
-	
-	gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-	
-	var showGrid = self.showGrid;
-	var routeLength = self.route.length;
-	var showRoute = routeLength && self.showRoute;
-	
-	if (showGrid || showRoute)
-	{
-		gl.useProgram(solidColorShader);
-		mvMatrix.setUniform(gl, solidColorShader.uMVMatrix, false);
-		pMatrix.setUniform(gl, solidColorShader.uPMatrix, false);
+		mvMatrix.makeIdentity();
+		mvMatrix.multiply(rotMatrix);
+		
+		if (projectionDirty)
+		{
+			pMatrix.perspective(30, canvas.width/canvas.height, 1, 1000);
+			pMatrix.lookat(0, 0, viewDistance, 0, 0, 0, 0, 1, 0);
+			particleBaseSize = canvas.height * 4 / viewDistance;
+			projectionDirty = false;
+		}
+		
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+		
+		var showGrid = self.showGrid;
+		var routeLength = self.route.length;
+		var showRoute = routeLength && self.showRoute;
+		
+		if (showGrid || showRoute)
+		{
+			gl.useProgram(solidColorShader);
+			mvMatrix.setUniform(gl, solidColorShader.uMVMatrix, false);
+			pMatrix.setUniform(gl, solidColorShader.uPMatrix, false);
+			
+			gl.bindBuffer(gl.ARRAY_BUFFER, starVBO);
+			gl.enableVertexAttribArray(solidColorShader.aPosition);
+			gl.vertexAttribPointer(solidColorShader.aPosition, 3, gl.FLOAT, false, 0, 0);
+		}
+		
+		if (showGrid)
+		{
+			gl.uniform4f(solidColorShader.uColor, 0.12, 0.18, 0.25, 1.0);
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gridVBO);
+			gl.drawElements(gl.LINES, gridCount * 2, gl.UNSIGNED_BYTE, 0);
+		}
+		
+		if (showRoute)
+		{
+			if (!routeVBO)  buildRouteVBO();
+			
+			gl.uniform4f(solidColorShader.uColor, 0.8, 0.8, 0.2, 1.0);
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, routeVBO);
+			gl.drawElements(gl.LINES, routeLength * 2, gl.UNSIGNED_BYTE, 0);
+		}
+		
+		gl.useProgram(particleShader);
+		mvMatrix.setUniform(gl, particleShader.uMVMatrix, false);
+		pMatrix.setUniform(gl, particleShader.uPMatrix, false);
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, starTexture);
+		gl.uniform1i(particleShader.uTexture, 0);
+		gl.uniform1f(particleShader.uParticleBaseSize, particleBaseSize);
 		
 		gl.bindBuffer(gl.ARRAY_BUFFER, starVBO);
-		gl.enableVertexAttribArray(solidColorShader.aPosition);
-		gl.vertexAttribPointer(solidColorShader.aPosition, 3, gl.FLOAT, false, 0, 0);
-	}
-	
-	if (showGrid)
-	{
-		gl.uniform4f(solidColorShader.uColor, 0.12, 0.18, 0.25, 1.0);
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gridVBO);
-		gl.drawElements(gl.LINES, gridCount * 2, gl.UNSIGNED_BYTE, 0);
-	}
-	
-	if (showRoute)
-	{
-		if (!routeVBO)  buildRouteVBO();
+		gl.enableVertexAttribArray(particleShader.aPosition);
+		gl.vertexAttribPointer(particleShader.aPosition, 3, gl.FLOAT, false, 0, 0);
 		
-		gl.uniform4f(solidColorShader.uColor, 0.8, 0.8, 0.2, 1.0);
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, routeVBO);
-		gl.drawElements(gl.LINES, routeLength * 2, gl.UNSIGNED_BYTE, 0);
+		gl.bindBuffer(gl.ARRAY_BUFFER, colorVBO);
+		gl.enableVertexAttribArray(particleShader.aColor);
+		gl.vertexAttribPointer(particleShader.aColor, 3, gl.FLOAT, false, 0, 0);
+		
+		gl.drawArrays(gl.POINTS, 0, starCount);
 	}
-	
-	gl.useProgram(particleShader);
-	mvMatrix.setUniform(gl, particleShader.uMVMatrix, false);
-	pMatrix.setUniform(gl, particleShader.uPMatrix, false);
-	gl.activeTexture(gl.TEXTURE0);
-	gl.bindTexture(gl.TEXTURE_2D, starTexture);
-	gl.uniform1i(particleShader.uTexture, 0);
-	gl.uniform1f(particleShader.uParticleBaseSize, particleBaseSize);
-	
-	gl.bindBuffer(gl.ARRAY_BUFFER, starVBO);
-	gl.enableVertexAttribArray(particleShader.aPosition);
-	gl.vertexAttribPointer(particleShader.aPosition, 3, gl.FLOAT, false, 0, 0);
-	
-	gl.bindBuffer(gl.ARRAY_BUFFER, colorVBO);
-	gl.enableVertexAttribArray(particleShader.aColor);
-	gl.vertexAttribPointer(particleShader.aColor, 3, gl.FLOAT, false, 0, 0);
-	
-	gl.drawArrays(gl.POINTS, 0, starCount);
 	
 	gl.flush();
 	gl.checkError("after rendering");
