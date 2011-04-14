@@ -94,7 +94,6 @@ var starCount, gridCount;
 var starTexture;
 var particleBaseSize;
 var projectionDirty = true;
-var viewDistance = 150;
 var console;
 
 
@@ -165,9 +164,29 @@ Object.defineProperty(self, "route",
 				gl.deleteBuffer(routeVBO);
 				routeVBO = null;
 			}
+			
+			renderFrame();
 		}
 	}
 });
+
+
+var _viewDistance = 150;
+Object.defineProperty(self, "viewDistance",
+{
+	get: function () { return _viewDistance; },
+	set: function(value)
+	{
+		value = +value;
+		if (value > 0 && value != _viewDistance)
+		{
+			_viewDistance = value;
+			projectionDirty = true;
+			renderFrame();
+		}
+	}
+});
+
 })();
 
 
@@ -247,9 +266,10 @@ function renderFrame()
 		
 		if (projectionDirty)
 		{
+			pMatrix.makeIdentity();
 			pMatrix.perspective(30, canvas.width/canvas.height, 1, 1000);
-			pMatrix.lookat(0, 0, viewDistance, 0, 0, 0, 0, 1, 0);
-			particleBaseSize = canvas.height * 4 / viewDistance;
+			pMatrix.lookat(0, 0, self.viewDistance, 0, 0, 0, 0, 1, 0);
+			particleBaseSize = canvas.height * 4 / self.viewDistance;
 			projectionDirty = false;
 		}
 		
