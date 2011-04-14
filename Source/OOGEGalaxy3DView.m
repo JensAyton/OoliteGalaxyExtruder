@@ -535,7 +535,7 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	if (drawGrid)
 	{
 		// Draw current grid.
-		OOGL(glColor3f(0.15f, 0.25f, 0.25f));
+		OOGL(glColor3f( 0.12f, 0.18f, 0.25f));
 		OOGL(glDrawElements(GL_LINES, _routesCount, GL_UNSIGNED_SHORT, 0));
 	}
 	
