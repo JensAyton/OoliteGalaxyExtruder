@@ -1,0 +1,21 @@
+body
+{
+	background-color: black;
+	color: white;
+	font: small sans-serif;
+}
+
+a
+{
+	color: #88f;
+}
+
+a:visited
+{
+	color: #f8f;
+}
+
+canvas
+{
+	border: none;
+}
