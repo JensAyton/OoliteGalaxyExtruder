@@ -275,20 +275,7 @@ static BOOL MakeSystem(OOGESystemRep *system, OOGEGalaxy *galaxy, unsigned idx, 
 		[colors addObject:$float(components[2])];
 	}
 	
-	NSMutableArray *neighbours = [NSMutableArray array];
-	for (OOGESystem *system in self.systems)
-	{
-		for (OOGESystem *neighbour in system.neighbours)
-		{
-			if (system.index < neighbour.index)
-			{
-				[neighbours addObject:$int(system.index)];
-				[neighbours addObject:$int(neighbour.index)];
-			}
-		}
-	}
-	
-	return $dict(@"positions", positions, @"colors", colors, @"neighbours", neighbours);
+	return $dict(@"positions", positions, @"colors", colors);
 }
 
 

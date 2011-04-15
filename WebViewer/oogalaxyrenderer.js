@@ -326,7 +326,7 @@ function loadedGalaxyData(data)
 	data = JSON.parse(data);
 	var positions = data.positions;
 	var colors = data.colors;
-	var neighbours = data.neighbours;
+	var neighbours = findNeighbours(positions);
 	
 	if (!positions || !colors || !neighbours || positions.length != colors.length)
 	{
@@ -353,6 +353,40 @@ function loadedGalaxyData(data)
 	gl.checkError("after loading galaxy data");
 	
 	renderFrame();
+}
+
+
+function findNeighbours(positions)
+{
+ 	/*
+ 		positions is a flat array containing three numbers per star.
+ 		getPosition() returns the coordinates of the Nth star.
+ 	*/
+	function getPosition(n)
+	{
+		n *= 3;
+		return positions.slice(n, n + 3);
+	}
+	
+	var result = [];
+	var i, j, count = positions.length / 3;
+	var threshold = 7;	// Maximum jump distance.
+	threshold *= threshold;
+	
+	for (i = 0; i < count; i++)
+	{
+		var p = getPosition(i);
+		for (j = i + 1; j < count; j++)
+		{
+			var q = getPosition(j);
+			if (vectorSquareDistance(p, q) <= threshold)
+			{
+				result.push(i, j);
+			}
+		}
+	}
+	
+	return result;
 }
 
 
@@ -609,6 +643,18 @@ function vectorScale(v, s)
 function vectorNormal(v)
 {
 	return vectorScale(v, 1 / vectorMagnitude(v));
+}
+
+
+function vectorSquareDistance(u, v)
+{
+	return vectorSquareMagnitude(vectorSubtract(u, v));
+}
+
+
+function vectorDistance(u, v)
+{
+	return vectorMagnitude(vectorSubtract(u, v));
 }
 
 
