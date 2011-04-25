@@ -41,7 +41,7 @@
 			<object class="NSWindowTemplate" id="1005">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{53, 484}, {1025, 580}}</string>
+				<string key="NSWindowRect">{{8, 141}, {1025, 580}}</string>
 				<int key="NSWTFlags">544735232</int>
 				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">NSWindow</string>
@@ -165,7 +165,7 @@
 								<int key="NSCellFlags2">131072</int>
 								<string key="NSContents"/>
 								<reference key="NSControlView" ref="379334840"/>
-								<double key="NSMaxValue">30</double>
+								<double key="NSMaxValue">75</double>
 								<double key="NSMinValue">0.0</double>
 								<double key="NSValue">1</double>
 								<double key="NSAltIncValue">0.0</double>
@@ -242,7 +242,7 @@
 								<int key="NSCellFlags2">131072</int>
 								<string key="NSContents"/>
 								<reference key="NSControlView" ref="200911855"/>
-								<double key="NSMaxValue">20</double>
+								<double key="NSMaxValue">75</double>
 								<double key="NSMinValue">0.0</double>
 								<double key="NSValue">1</double>
 								<double key="NSAltIncValue">0.0</double>
@@ -359,7 +359,7 @@
 								<int key="NSCellFlags2">131072</int>
 								<string key="NSContents"/>
 								<reference key="NSControlView" ref="1064377131"/>
-								<double key="NSMaxValue">30</double>
+								<double key="NSMaxValue">50</double>
 								<double key="NSMinValue">0.0</double>
 								<double key="NSValue">3.4472049689440993</double>
 								<double key="NSAltIncValue">0.0</double>
@@ -555,7 +555,7 @@
 								<int key="NSCellFlags2">131072</int>
 								<string key="NSContents"/>
 								<reference key="NSControlView" ref="644635532"/>
-								<double key="NSMaxValue">1</double>
+								<double key="NSMaxValue">2</double>
 								<double key="NSMinValue">0.0</double>
 								<double key="NSValue">1</double>
 								<double key="NSAltIncValue">0.0</double>
@@ -569,7 +569,7 @@
 					<string key="NSFrameSize">{1025, 580}</string>
 					<reference key="NSSuperview"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1366, 746}}</string>
 				<string key="NSMinSize">{1000, 602}</string>
 				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
 			</object>
@@ -1359,9 +1359,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{-21, 144}, {1025, 580}}</string>
+					<string>{{8, 141}, {1025, 580}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{-21, 144}, {1025, 580}}</string>
+					<string>{{8, 141}, {1025, 580}}</string>
 					<integer value="1"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>
@@ -1527,9 +1527,13 @@
 							<string>reset:</string>
 							<string>runStop:</string>
 							<string>step:</string>
+							<string>zoomIn:</string>
+							<string>zoomOut:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -1544,6 +1548,8 @@
 							<string>reset:</string>
 							<string>runStop:</string>
 							<string>step:</string>
+							<string>zoomIn:</string>
+							<string>zoomOut:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1561,6 +1567,14 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">step:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">zoomIn:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">zoomOut:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 						</object>
@@ -1627,6 +1641,38 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">OOGEGalaxy3DView</string>
 					<string key="superclassName">NSOpenGLView</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>zoomIn:</string>
+							<string>zoomOut:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>zoomIn:</string>
+							<string>zoomOut:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">zoomIn:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">zoomOut:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Source/OOGEGalaxy3DView.h</string>
