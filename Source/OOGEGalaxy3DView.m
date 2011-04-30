@@ -265,7 +265,7 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 
 - (void) magnifyWithEvent:(NSEvent *)event
 {
-	_drawDistance *= 1.0 + event.magnification;
+	_drawDistance *= 1.0 - event.magnification;
 	[self displaySettingsChanged];
 }
 
