@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import <OoliteBase/OoliteBase.h>
 
-@class OOGEGalaxy, OOGEGalaxy2DView, OOGEGalaxy3DView;
+@class OOGEGalaxy, OOGEGalaxy3DView;
 
 
 @interface OOGEDocument: NSDocument
@@ -19,7 +19,6 @@
 	double					_lastTime;
 }
 
-@property IBOutlet OOGEGalaxy2DView *galaxy2DView;
 @property IBOutlet OOGEGalaxy3DView *galaxy3DView;
 @property IBOutlet NSButton *stepButton;
 @property IBOutlet NSButton *runStopButton;

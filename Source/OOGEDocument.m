@@ -8,7 +8,6 @@
 
 #import "OOGEDocument.h"
 #import "OOGEGalaxy.h"
-#import "OOGEGalaxy2DView.h"
 #import "OOGEGalaxy3DView.h"
 
 
@@ -24,7 +23,7 @@
 
 @implementation OOGEDocument
 
-@synthesize galaxy = _galaxy, galaxy2DView = _galaxy2DView, galaxy3DView = _galaxy3DView, stepButton = _stepButton, runStopButton = _runStopButton;
+@synthesize galaxy = _galaxy, galaxy3DView = _galaxy3DView, stepButton = _stepButton, runStopButton = _runStopButton;
 
 
 - (void) finalize
@@ -51,7 +50,6 @@
 
 - (void) windowControllerDidLoadNib:(NSWindowController *)windowController
 {
-	self.galaxy2DView.galaxy = self.galaxy;
 	self.galaxy3DView.galaxy = self.galaxy;
 }
 

@@ -15,7 +15,6 @@
 		1A910F9B134C57B900FAD441 /* OOGEDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A910F9A134C57B900FAD441 /* OOGEDocument.m */; };
 		1A910FA0134C581C00FAD441 /* OOGEDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A910F9E134C581C00FAD441 /* OOGEDocument.xib */; };
 		1A910FD0134C5A3300FAD441 /* OOGEGalaxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A910FCF134C5A3300FAD441 /* OOGEGalaxy.m */; };
-		1A911092134C70DD00FAD441 /* OOGEGalaxy2DView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A911091134C70DD00FAD441 /* OOGEGalaxy2DView.m */; };
 		1A911366134F3B7D00FAD441 /* OOGEGalaxy3DView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A911365134F3B7D00FAD441 /* OOGEGalaxy3DView.m */; };
 		1A9113F4134F47D000FAD441 /* oolite-star-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A9113F3134F47D000FAD441 /* oolite-star-1.png */; };
 		1A91142E134F4A9900FAD441 /* OoliteGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A91142D134F4A9200FAD441 /* OoliteGraphics.framework */; };
@@ -88,8 +87,6 @@
 		1A910F9F134C581C00FAD441 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/OOGEDocument.xib; sourceTree = "<group>"; };
 		1A910FCE134C5A3300FAD441 /* OOGEGalaxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOGEGalaxy.h; sourceTree = "<group>"; };
 		1A910FCF134C5A3300FAD441 /* OOGEGalaxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOGEGalaxy.m; sourceTree = "<group>"; };
-		1A911090134C70DD00FAD441 /* OOGEGalaxy2DView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOGEGalaxy2DView.h; sourceTree = "<group>"; };
-		1A911091134C70DD00FAD441 /* OOGEGalaxy2DView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOGEGalaxy2DView.m; sourceTree = "<group>"; };
 		1A911364134F3B7D00FAD441 /* OOGEGalaxy3DView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOGEGalaxy3DView.h; sourceTree = "<group>"; };
 		1A911365134F3B7D00FAD441 /* OOGEGalaxy3DView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOGEGalaxy3DView.m; sourceTree = "<group>"; };
 		1A9113F3134F47D000FAD441 /* oolite-star-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "oolite-star-1.png"; sourceTree = "<group>"; };
@@ -140,8 +137,6 @@
 		1A17D27011C18F9000F96041 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				1A911090134C70DD00FAD441 /* OOGEGalaxy2DView.h */,
-				1A911091134C70DD00FAD441 /* OOGEGalaxy2DView.m */,
 				1A911364134F3B7D00FAD441 /* OOGEGalaxy3DView.h */,
 				1A911365134F3B7D00FAD441 /* OOGEGalaxy3DView.m */,
 			);
@@ -358,7 +353,6 @@
 				1ADB321C122AF99D00F890B8 /* OOGEApplicationDelegate.m in Sources */,
 				1A910F9B134C57B900FAD441 /* OOGEDocument.m in Sources */,
 				1A910FD0134C5A3300FAD441 /* OOGEGalaxy.m in Sources */,
-				1A911092134C70DD00FAD441 /* OOGEGalaxy2DView.m in Sources */,
 				1A911366134F3B7D00FAD441 /* OOGEGalaxy3DView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
