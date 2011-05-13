@@ -79,6 +79,9 @@ var particleBaseSize;
 var projectionDirty = true;
 var console;
 
+var Vector3D = OO3D.Vector3D;
+var Matrix4x4 = OO3D.Matrix4x4;
+
 
 // MARK: Public properties
 (function (){
@@ -228,15 +231,10 @@ Object.defineProperty(self, "viewDistance",
 	gl.clearColor(0, 0, 0, 1);
 	gl.enable(gl.BLEND);
 	
-	mvMatrix = new J3DIMatrix4();
-	pMatrix = new J3DIMatrix4();
-	rotMatrix = new J3DIMatrix4();
-	rotMatrix.rotate(180, 0, 1, 0);
-	rotMatrix.rotate(180, 0, 0, 1);
-	
-	// Start out empty.
-	gl.clear(gl.COLOR_BUFFER_BIT);
-	gl.flush();
+	mvMatrix = new Matrix4x4();
+	pMatrix = new Matrix4x4();
+	rotMatrix = new Matrix4x4();
+	rotMatrix.rotateX(Math.PI);
 })();
 
 
@@ -249,14 +247,15 @@ function renderFrame()
 	
 	if (starVBO)
 	{
-		mvMatrix.makeIdentity();
+		mvMatrix.setIdentity();
 		mvMatrix.multiply(rotMatrix);
 		
 		if (projectionDirty)
 		{
-			pMatrix.makeIdentity();
+			pMatrix.setIdentity();
 			pMatrix.perspective(30, canvas.width/canvas.height, 1, 1000);
-			pMatrix.lookat(0, 0, self.viewDistance, 0, 0, 0, 0, 1, 0);
+			pMatrix.lookAt([0, 0, self.viewDistance], [0, 0, 0], [0, 1, 0]);
+			
 			particleBaseSize = canvas.height * 4 / self.viewDistance;
 			projectionDirty = false;
 		}
@@ -270,8 +269,8 @@ function renderFrame()
 		if (showGrid || showRoute)
 		{
 			gl.useProgram(solidColorShader);
-			mvMatrix.setUniform(gl, solidColorShader.uMVMatrix, false);
-			pMatrix.setUniform(gl, solidColorShader.uPMatrix, false);
+			mvMatrix.setUniform(gl, solidColorShader.uMVMatrix);
+			pMatrix.setUniform(gl, solidColorShader.uPMatrix);
 			
 			gl.bindBuffer(gl.ARRAY_BUFFER, starVBO);
 			gl.enableVertexAttribArray(solidColorShader.aPosition);
@@ -295,8 +294,8 @@ function renderFrame()
 		}
 		
 		gl.useProgram(particleShader);
-		mvMatrix.setUniform(gl, particleShader.uMVMatrix, false);
-		pMatrix.setUniform(gl, particleShader.uPMatrix, false);
+		mvMatrix.setUniform(gl, particleShader.uMVMatrix);
+		pMatrix.setUniform(gl, particleShader.uPMatrix);
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, starTexture);
 		gl.uniform1i(particleShader.uTexture, 0);
@@ -365,7 +364,7 @@ function findNeighbours(positions)
 	function getPosition(n)
 	{
 		n *= 3;
-		return positions.slice(n, n + 3);
+		return new Vector3D(positions.slice(n, n + 3));
 	}
 	
 	var result = [];
@@ -379,7 +378,7 @@ function findNeighbours(positions)
 		for (j = i + 1; j < count; j++)
 		{
 			var q = getPosition(j);
-			if (vectorSquareDistance(p, q) <= threshold)
+			if (p.squaredDistanceTo(q) <= threshold)
 			{
 				result.push(i, j);
 			}
@@ -559,23 +558,15 @@ function handleMouseDown(event)
 function handleMouseDrag(event)
 {
 	var newDragPoint = virtualTrackballLocation(event);
-	var delta = vectorSubtract(newDragPoint, dragPoint);
+	var delta = newDragPoint.subtract(dragPoint);
 	
-	var deltaMag = vectorMagnitude(delta);
+	var deltaMag = delta.magnitude();
 	if (0.001 < deltaMag)
 	{
 		// Rotate about the axis that is perpendicular to the great circle connecting the mouse points.
-		var axis = vectorCrossProduct(dragPoint, newDragPoint);
+		var axis = dragPoint.cross(newDragPoint).direction();
 		
-		/*
-			Silliness because rotate() is backwards. I could probably fix this
-			by opening a maths book and inserting a bunch of transposes and
-			inverts, but it doesn’t seem worth it. Will need to write my own
-			JS matrix library at some point anyway.
-			-- Ahruman 2011-04-14
-		*/
-		var rot = new J3DIMatrix4;
-		rot.rotate(deltaMag * 180 / Math.PI, vectorNormal(axis));
+		var rot = Matrix4x4.matrixForRotation(axis, deltaMag);
 		rot.multiply(rotMatrix);
 		rotMatrix = rot;
 		
@@ -602,76 +593,11 @@ function virtualTrackballLocation(event)
 	x = (2 * x - width) / width;
 	y = -(2 * y - height) / height;
 	
-	var d = Math.min(1, vectorSquareMagnitude([x, y]));
-	var z = Math.sqrt(1.0001 - d);
+	var v = new Vector3D(x, y, 0);
+	var d = Math.min(1, v.squaredMagnitude());
+	v.z = Math.sqrt(1.0001 - d);
 	
-	return vectorNormal([x, y, z]);
-}
-
-
-// MARK: Overly generic vector routines.
-function vectorAdd(u, v)
-{
-	return u.map(function(x, idx) { return x + v[idx]; });
-}
-
-
-function vectorSubtract(u, v)
-{
-	return u.map(function(x, idx) { return x - v[idx]; });
-}
-
-
-function vectorSquareMagnitude(v)
-{
-	return v.reduce(function(a, x) { return a + x * x; }, 0);
-}
-
-
-function vectorMagnitude(v)
-{
-	return Math.sqrt(vectorSquareMagnitude(v));
-}
-
-
-function vectorScale(v, s)
-{
-	return v.map(function(n) { return n * s; });
-}
-
-
-function vectorNormal(v)
-{
-	return vectorScale(v, 1 / vectorMagnitude(v));
-}
-
-
-function vectorSquareDistance(u, v)
-{
-	return vectorSquareMagnitude(vectorSubtract(u, v));
-}
-
-
-function vectorDistance(u, v)
-{
-	return vectorMagnitude(vectorSubtract(u, v));
-}
-
-
-function vectorDotProduct(u, v)
-{
-	return u.reduce(function(a, x, idx) { return a + x * v[idx]; }, 0);
-}
-
-
-// Less generic, since it’s only (unambiguously) defined in three dimensions.
-function vectorCrossProduct(u, v)
-{
-	return [
-		u[1] * v[2] - v[1] * u[2],
-		u[2] * v[0] - v[2] * u[0],
-		u[0] * v[1] - v[0] * u[1]
-	];
+	return v.direction();
 }
 
 
