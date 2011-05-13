@@ -10,9 +10,8 @@
 #import <OpenGL/gl.h>
 #import <OpenGL/glu.h>
 #import "OOGEGalaxy.h"
-#import <OoliteGraphics/OoliteGraphics.h>
 
-@interface OOGEGalaxy3DView ()
+@interface OOGEGalaxy3DView () <OOFileResolving, OOProblemReporting>
 
 - (id) finishInit;
 
@@ -20,8 +19,6 @@
 - (void) displaySettingsChanged;
 
 - (void) renderParticles;
-
--(void) makeTextureFromImage:(NSImage*)theImg forTexture:(GLuint*)texName;
 
 - (Vector) virtualTrackballLocationForPoint:(NSPoint)point;
 
@@ -76,7 +73,8 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 
 - (id) finishInit
 {
-	[[self openGLContext] makeCurrentContext];
+	_context = [[OOGraphicsContext alloc] initWithOpenGLContext:[self openGLContext]];
+	[_context makeCurrent];
 	
 	unsigned major, minor, subminor;
 	GetGLVersion(&major, &minor, &subminor);
@@ -95,9 +93,8 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	_cameraRotation = OOMatrixForRotationX(M_PI);
 	_drawDistance = 100.0f;
 	
-	NSImage *texture = [NSImage imageNamed:@"oolite-star-1"];
-	[self makeTextureFromImage:texture forTexture:&_texName];
-	CheckGLError(@"after loading point sprite texture");
+	OOTextureSpecification *spec = [OOTextureSpecification textureSpecWithName:@"oolite-star-1.png"];
+	_texture = [OOTexture textureWithSpecification:spec fileResolver:self problemReporter:self];
 	
 	self.drawGrid = YES;
 	self.drawStars = YES;
@@ -110,7 +107,7 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 
 - (void)drawRect:(NSRect)rect
 {
-	[[self openGLContext] makeCurrentContext];
+	[_context makeCurrent];
 	
 	// Set up camera
 	glMatrixMode(GL_MODELVIEW);
@@ -144,7 +141,7 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 
 - (void)reshape
 {
-	[[self openGLContext] makeCurrentContext];
+	[_context makeCurrent];
 	
 	NSSize dimensions = self.frame.size;
 	
@@ -296,9 +293,6 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 - (void) galaxyChanged
 {
 	[self setNeedsDisplay:YES];
-	
-	[[self openGLContext] makeCurrentContext];
-	
 	_starVBOUpToDate = NO;
 }
 
@@ -548,7 +542,8 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 	{
 		// Draw stars.
 		OOGL(glEnable(GL_TEXTURE_2D));
-		OOGL(glBindTexture(GL_TEXTURE_2D, _texName));
+		[_texture apply];
+	//	OOGL(glBindTexture(GL_TEXTURE_2D, _texName));
 		OOGL(glEnable(GL_POINT_SPRITE));
 		OOGL(glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE));
 		
@@ -650,50 +645,43 @@ static void GetGLVersion(unsigned *major, unsigned *minor, unsigned *subminor);
 }
 
 
--(void) makeTextureFromImage:(NSImage*)theImg forTexture:(GLuint*)texName
+// MARK: OOFileResolving
+
+- (NSData *) contentsOfFileFileNamed:(NSString *)name
+							inFolder:(NSString *)folder
+					 problemReporter:(id <OOProblemReporting>)problemReporter
 {
-    NSBitmapImageRep* bitmap = [NSBitmapImageRep alloc];
-    int samplesPerPixel = 0;
-    NSSize imgSize = [theImg size];
+	NSURL *url = [[NSBundle mainBundle] URLForResource:name withExtension:nil];
+	NSData *data = nil;
+	if (url == nil)
+	{
+		OOReportError(problemReporter, @"%@: file not found.", name);
+	}
+	else
+	{
+		NSError *error = nil;
+		data = [NSData dataWithContentsOfURL:url options:NSDataReadingMapped error:&error];
+		if (data == nil)
+		{
+			OOReportNSError(problemReporter, @"Could not load texture", error);
+		}
+	}
 	
-    [theImg lockFocus];
-    [bitmap initWithFocusedViewRect:NSMakeRect(0.0, 0.0, imgSize.width, imgSize.height)];
-    [theImg unlockFocus];
-	
-    // Set proper unpacking row length for bitmap.
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, [bitmap pixelsWide]);
-	
-    // Set byte aligned unpacking (needed for 3 byte per pixel bitmaps).
-    glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
-	
-    // Generate a new texture name if one was not provided.
-    if (*texName == 0)
-        glGenTextures (1, texName);
-    glBindTexture (GL_TEXTURE_2D, *texName);
-	
-    // Non-mipmap filtering (redundant for texture_rectangle).
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,  GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-    samplesPerPixel = [bitmap samplesPerPixel];
-	
-    // Nonplanar, RGB 24 bit bitmap, or RGBA 32 bit bitmap.
-    if(![bitmap isPlanar] && (samplesPerPixel == 3 || samplesPerPixel == 4)) {
-		
-        glTexImage2D(GL_TEXTURE_2D, 0,
-					 samplesPerPixel == 4 ? GL_RGBA8 : GL_RGB8,
-					 [bitmap pixelsWide],
-					 [bitmap pixelsHigh],
-					 0,
-					 samplesPerPixel == 4 ? GL_RGBA : GL_RGB,
-					 GL_UNSIGNED_BYTE,
-					 [bitmap bitmapData]);
-    } else {
-        // Handle other bitmap formats.
-    }
-	
-	
-    // Clean up.
-    [bitmap release];
+	return data;
+}
+
+
+// MARK: OOProblemReporting
+
+- (void) addProblemOfType:(OOProblemReportType)type message:(NSString *)message
+{
+	OOLog(@"resource.load", @"%@", message);
+}
+
+
+- (NSString *) localizedProblemStringForKey:(NSString *)string
+{
+	return nil;
 }
 
 @end

@@ -21,7 +21,8 @@
 - (BOOL) shouldShowMessageInClass:(NSString *)messageClass
 {
 //	if ([messageClass hasPrefix:@"rendering.opengl"])  return NO;
-//	if ([messageClass hasPrefix:@"texture.load"])  return NO;
+	if ([messageClass hasPrefix:@"texture.load"])  return NO;
+	if ([messageClass isEqualToString:@"texture.upload"])  return NO;
 	
 	return YES;
 }

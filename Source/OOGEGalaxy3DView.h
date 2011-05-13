@@ -9,18 +9,20 @@
 #import <Cocoa/Cocoa.h>
 #import <OoliteGraphics/OoliteGraphics.h>
 
-@class OOGEGalaxy, OOTexture;
+@class OOGEGalaxy;
 
 
-@interface OOGEGalaxy3DView : NSOpenGLView
+@interface OOGEGalaxy3DView: NSOpenGLView
 {
 @private
+	OOGraphicsContext				*_context;
+	
 	OOGEGalaxy						*_galaxy;
 	Vector							_dragPoint;
 	OOMatrix						_cameraRotation;
 	float							_drawDistance;
 	
-	GLuint							_texName;
+	OOTexture						*_texture;
 	
 	__strong GLfloat				*_starVBOData;
 	size_t							_starVBOSize;
